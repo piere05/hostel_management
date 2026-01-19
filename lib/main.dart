@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import 'firebase_options.dart';
 import 'screens/login_screen.dart';
 import 'screens/student_dashboard.dart';
 import 'screens/hostel_admin_dashboard.dart';
 import 'screens/mess_admin_dashboard.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 
 const Color appBrown = Color.fromARGB(255, 124, 62, 3);
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+
+  // ✅ CORRECT INITIALIZATION
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.web,
+    );
+  } else {
+    await Firebase.initializeApp(); // ANDROID
+  }
+
   runApp(const HostelApp());
 }
 
@@ -44,8 +51,6 @@ class HostelApp extends StatelessWidget {
           ),
         ),
       ),
-
-      // 🔥 THIS IS THE KEY FIX
       home: const AuthGate(),
     );
   }
@@ -66,24 +71,20 @@ class AuthGate extends StatelessWidget {
           );
         }
 
-        // NOT LOGGED IN
         if (!snapshot.hasData) {
           return const LoginScreen();
         }
 
         final email = snapshot.data!.email ?? "";
 
-        // HOSTEL ADMIN
         if (email == "hostel@gmail.com") {
           return const HostelAdminDashboard();
         }
 
-        // MESS ADMIN
         if (email == "mess@gmail.com") {
           return const MessAdminDashboard();
         }
 
-        // STUDENT CHECK
         return FutureBuilder<QuerySnapshot>(
           future: FirebaseFirestore.instance
               .collection("student")
@@ -97,12 +98,10 @@ class AuthGate extends StatelessWidget {
               );
             }
 
-            // STUDENT FOUND
             if (snap.hasData && snap.data!.docs.isNotEmpty) {
               return const StudentDashboard();
             }
 
-            // NOT STUDENT → LOGOUT
             FirebaseAuth.instance.signOut();
             return const LoginScreen();
           },
