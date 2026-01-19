@@ -5,7 +5,9 @@ import '../main.dart';
 import '../screens/login_screen.dart';
 import '../screens/hostel_admin_dashboard.dart';
 
+import 'add_notice_screen.dart';
 import 'add_student_screen.dart';
+import 'hostel_admin_notification_screen.dart';
 import 'list_students_screen.dart';
 import 'add_breakage_screen.dart';
 import 'breakage_list_screen.dart';
@@ -43,9 +45,7 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
   }
 
   void _go(Widget page) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => page),
-    );
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
   }
 
   @override
@@ -85,10 +85,11 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
                   ),
                   body: Column(
                     children: [
-                      _sub("Add Student",
-                          () => _go(const AddStudentScreen())),
-                      _sub("List Students",
-                          () => _go(const ListStudentsScreen())),
+                      _sub("Add Student", () => _go(const AddStudentScreen())),
+                      _sub(
+                        "List Students",
+                        () => _go(const ListStudentsScreen()),
+                      ),
                     ],
                   ),
                 ),
@@ -101,10 +102,14 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
                   ),
                   body: Column(
                     children: [
-                      _sub("Add Breakage",
-                          () => _go(const AddBreakageScreen())),
-                      _sub("Breakage List",
-                          () => _go(const BreakageListScreen())),
+                      _sub(
+                        "Add Breakage",
+                        () => _go(const AddBreakageScreen()),
+                      ),
+                      _sub(
+                        "Breakage List",
+                        () => _go(const BreakageListScreen()),
+                      ),
                     ],
                   ),
                 ),
@@ -117,8 +122,10 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
                   ),
                   body: Column(
                     children: [
-                      _sub("Leave Requests",
-                          () => _go(const LeaveListScreen())),
+                      _sub(
+                        "Leave Requests",
+                        () => _go(const LeaveListScreen()),
+                      ),
                     ],
                   ),
                 ),
@@ -131,8 +138,8 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
                   ),
                   body: Column(
                     children: [
-                      _sub("Notice List",
-                          () => _go(const NoticeListScreen())),
+                      _sub("Add Notice ", () => _go(const AddNoticeScreen())),
+                      _sub("List Notice ", () => _go(const NoticeListScreen())),
                     ],
                   ),
                 ),
@@ -145,8 +152,14 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
                   ),
                   body: Column(
                     children: [
-                      _sub("Attendance List",
-                          () => _go(const AttendanceListScreen())),
+                      _sub(
+                        "Add Attendance",
+                        () => _go(const AttendanceListScreen()),
+                      ),
+                      _sub(
+                        "List Attendance",
+                        () => _go(const AttendanceListScreen()),
+                      ),
                     ],
                   ),
                 ),
@@ -179,7 +192,7 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
           if (index == 0) {
             _go(const HostelAdminDashboard());
           } else if (index == 1) {
-            _go(const NoticeListScreen());
+            _go(const HostelAdminNotificationScreen());
           } else if (index == 2) {
             _go(const BreakageListScreen());
           } else if (index == 3) {
@@ -187,14 +200,13 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
           }
         },
         items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Home"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard), label: "Home"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.notifications), label: "Notices"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.warning), label: "Breakage"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.logout), label: "Logout"),
+            icon: Icon(Icons.notifications),
+            label: "Notifications",
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.warning), label: "Breakage"),
+          BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),
         ],
       ),
     );

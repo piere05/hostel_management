@@ -9,9 +9,21 @@ import '../hostel_admin/list_students_screen.dart';
 import '../hostel_admin/attendance_list_screen.dart';
 import '../hostel_admin/leave_list_screen.dart';
 import '../hostel_admin/mess_menu_screen.dart';
+import '../utils/fcm_service.dart';
 
-class HostelAdminDashboard extends StatelessWidget {
+class HostelAdminDashboard extends StatefulWidget {
   const HostelAdminDashboard({super.key});
+
+  @override
+  State<HostelAdminDashboard> createState() => _HostelAdminDashboardState();
+}
+
+class _HostelAdminDashboardState extends State<HostelAdminDashboard> {
+  @override
+  void initState() {
+    super.initState();
+    FCMService.saveToken(); // ✅ FCM TOKEN SAVED (CORRECT PLACE)
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,90 +36,109 @@ class HostelAdminDashboard extends StatelessWidget {
       title: "Dashboard",
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: GridView.count(
-          crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          childAspectRatio: 1.1,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            /// TOTAL STUDENTS
-            _box(
-              context,
-              title: "Total Students",
-              icon: Icons.people,
-              color: appBrown,
-              stream: FirebaseFirestore.instance
-                  .collection('student')
-                  .snapshots(),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ListStudentsScreen(),
-                  ),
-                );
-              },
+            /// ✅ WELCOME TEXT
+            const Text(
+              "Welcome,",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              "Hostel Admin",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
 
-            /// PRESENT TODAY
-            _box(
-              context,
-              title: "Present Today",
-              icon: Icons.check_circle,
-              color: Colors.green,
-              stream: FirebaseFirestore.instance
-                  .collection('attendance')
-                  .where('date', isEqualTo: todayStr)
-                  .snapshots(),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const AttendanceListScreen(),
-                  ),
-                );
-              },
-            ),
+            const SizedBox(height: 20),
 
-            /// LEAVES (7 DAYS)
-            _box(
-              context,
-              title: "Leaves (7 Days)",
-              icon: Icons.assignment,
-              color: Colors.orange,
-              stream: FirebaseFirestore.instance
-                  .collection('leaves')
-                  .where('fromDate', isGreaterThanOrEqualTo: lastWeek)
-                  .snapshots(),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const LeaveListScreen(),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 1.1,
+                children: [
+                  /// TOTAL STUDENTS
+                  _box(
+                    context,
+                    title: "Total Students",
+                    icon: Icons.people,
+                    color: appBrown,
+                    stream: FirebaseFirestore.instance
+                        .collection('student')
+                        .snapshots(),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ListStudentsScreen(),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
 
-            /// MESS MENU
-            _box(
-              context,
-              title: "Mess Menu",
-              icon: Icons.restaurant,
-              color: Colors.blue,
-              stream: FirebaseFirestore.instance
-                  .collection('mess_menu')
-                  .snapshots(),
-              showCount: false,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const MessMenuScreen(),
+                  /// PRESENT TODAY
+                  _box(
+                    context,
+                    title: "Present Today",
+                    icon: Icons.check_circle,
+                    color: Colors.green,
+                    stream: FirebaseFirestore.instance
+                        .collection('attendance')
+                        .where('date', isEqualTo: todayStr)
+                        .snapshots(),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AttendanceListScreen(),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
+
+                  /// LEAVES (7 DAYS)
+                  _box(
+                    context,
+                    title: "Leaves (7 Days)",
+                    icon: Icons.assignment,
+                    color: Colors.orange,
+                    stream: FirebaseFirestore.instance
+                        .collection('leaves')
+                        .where('fromDate', isGreaterThanOrEqualTo: lastWeek)
+                        .snapshots(),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const LeaveListScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  /// MESS MENU
+                  _box(
+                    context,
+                    title: "Mess Menu",
+                    icon: Icons.restaurant,
+                    color: Colors.blue,
+                    stream: FirebaseFirestore.instance
+                        .collection('mess_menu')
+                        .snapshots(),
+                    showCount: false,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const MessMenuScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -141,10 +172,7 @@ class HostelAdminDashboard extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             showCount
@@ -163,10 +191,7 @@ class HostelAdminDashboard extends StatelessWidget {
                   )
                 : const Text(
                     "View",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
           ],
         ),
