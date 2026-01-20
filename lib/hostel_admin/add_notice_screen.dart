@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'hostel_admin_layout.dart';
+import 'notice_list_screen.dart';
 
 class AddNoticeScreen extends StatefulWidget {
   final String? docId;
@@ -58,7 +59,12 @@ class _AddNoticeScreenState extends State<AddNoticeScreen> {
       await ref.doc(widget.docId).update(data);
     }
 
-    Navigator.pop(context);
+   Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const NoticeListScreen(),
+    ),
+  );
   }
 
   @override

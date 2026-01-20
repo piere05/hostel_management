@@ -10,10 +10,10 @@ import 'add_notice_screen.dart';
 import 'add_student_screen.dart';
 import 'attendance_report_screen.dart';
 import 'hostel_admin_notification_screen.dart';
+import 'hostel_notification.dart';
 import 'list_students_screen.dart';
 import 'add_breakage_screen.dart';
 import 'breakage_list_screen.dart';
-import 'attendance_list_screen.dart';
 import 'leave_list_screen.dart';
 import 'notice_list_screen.dart';
 
@@ -194,7 +194,7 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
           if (index == 0) {
             _go(const HostelAdminDashboard());
           } else if (index == 1) {
-            _go(const HostelAdminNotificationScreen());
+            _go(const hostel_admin_notification_screen());
           } else if (index == 2) {
             _go(const BreakageListScreen());
           } else if (index == 3) {

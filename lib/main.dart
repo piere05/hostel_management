@@ -82,7 +82,7 @@ class AuthGate extends StatelessWidget {
         }
 
         if (email == "mess@gmail.com") {
-          return const MessAdminDashboard();
+          return const MessDashboard();
         }
 
         return FutureBuilder<QuerySnapshot>(

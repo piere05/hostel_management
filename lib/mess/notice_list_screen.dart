@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-import 'hostel_admin_layout.dart';
+import 'mess_layout.dart';
 import 'add_notice_screen.dart';
 
 class NoticeListScreen extends StatelessWidget {
@@ -10,12 +10,12 @@ class NoticeListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HostelAdminLayout(
+    return MessLayout(
       title: "Notices",
       child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('notices')
-            .where('createdBy', isEqualTo: 'Admin')
+            .where('createdBy', isEqualTo: 'Mess Admin')
             .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
@@ -81,8 +81,11 @@ class NoticeListScreen extends StatelessWidget {
                                         context,
                                         MaterialPageRoute(
                                           builder: (_) => AddNoticeScreen(
-                                            docId: doc.id,
-          data: data,
+                                            editId: doc.id,
+                                            editTitle: data['title'],
+                                            editDesc: data['description'],
+                                            editSendPush:
+                                                data['sendPush'] ?? true,
                                           ),
                                         ),
                                       );

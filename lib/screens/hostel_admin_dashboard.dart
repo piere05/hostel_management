@@ -7,9 +7,8 @@ import '../hostel_admin/attendance_report_screen.dart';
 import '../main.dart';
 import '../hostel_admin/hostel_admin_layout.dart';
 import '../hostel_admin/list_students_screen.dart';
-import '../hostel_admin/attendance_list_screen.dart';
 import '../hostel_admin/leave_list_screen.dart';
-import '../hostel_admin/mess_menu_screen.dart';
+import 'mess_menu_screen.dart';
 import '../utils/fcm_service.dart';
 
 class HostelAdminDashboard extends StatefulWidget {
@@ -20,10 +19,10 @@ class HostelAdminDashboard extends StatefulWidget {
 }
 
 class _HostelAdminDashboardState extends State<HostelAdminDashboard> {
-  @override
+ @override
   void initState() {
     super.initState();
-    FCMService.saveToken(); // ✅ FCM TOKEN SAVED (CORRECT PLACE)
+    FCMService.init();
   }
 
   @override

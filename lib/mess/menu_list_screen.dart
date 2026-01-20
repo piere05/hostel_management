@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 
-import 'hostel_admin_layout.dart';
-import 'add_notice_screen.dart';
+import 'mess_layout.dart';
+import 'add_menu_screen.dart';
 
-class NoticeListScreen extends StatelessWidget {
-  const NoticeListScreen({super.key});
+class MenuListScreen extends StatelessWidget {
+  const MenuListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return HostelAdminLayout(
-      title: "Notices",
+    return MessLayout(
+      title: "Mess Menu",
       child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('notices')
-            .where('createdBy', isEqualTo: 'Admin')
-            .orderBy('createdAt', descending: true)
+            .collection('mess_menu')
+            .orderBy('day')
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -24,7 +22,7 @@ class NoticeListScreen extends StatelessWidget {
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text("No notices found"));
+            return const Center(child: Text("No menu added yet"));
           }
 
           final docs = snapshot.data!.docs;
@@ -40,34 +38,24 @@ class NoticeListScreen extends StatelessWidget {
                       minWidth: constraints.maxWidth,
                     ),
                     child: DataTable(
-                      columnSpacing: 30,
+                      columnSpacing: 40,
                       headingRowHeight: 56,
-                      dataRowHeight: 64,
+                      dataRowHeight: 60,
                       columns: const [
-                        DataColumn(label: Text("Date")),
-                        DataColumn(label: Text("Title")),
-                        DataColumn(label: Text("Description")),
+                        DataColumn(label: Text("Day")),
+                        DataColumn(label: Text("Menu")),
                         DataColumn(label: Text("Action")),
                       ],
                       rows: docs.map((doc) {
                         final data = doc.data() as Map<String, dynamic>;
-                        final ts = data['createdAt'] as Timestamp?;
-                        final date = ts == null
-                            ? "-"
-                            : DateFormat('dd-MM-yyyy').format(ts.toDate());
 
                         return DataRow(
                           cells: [
-                            DataCell(Text(date)),
-                            DataCell(Text(data['title'] ?? "")),
+                            DataCell(Text(data['day'])),
                             DataCell(
                               SizedBox(
-                                width: 350,
-                                child: Text(
-                                  data['description'] ?? "",
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                width: 400,
+                                child: Text(data['menu']),
                               ),
                             ),
                             DataCell(
@@ -80,9 +68,9 @@ class NoticeListScreen extends StatelessWidget {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) => AddNoticeScreen(
-                                            docId: doc.id,
-          data: data,
+                                          builder: (_) => AddMenuScreen(
+                                            editDay: data['day'],
+                                            editMenu: data['menu'],
                                           ),
                                         ),
                                       );
@@ -111,32 +99,30 @@ class NoticeListScreen extends StatelessWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, String id) {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (dialogContext) => AlertDialog(
-      title: const Text("Delete Notice"),
-      content: const Text("Are you sure you want to delete this notice?"),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext),
-          child: const Text("Cancel"),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            await FirebaseFirestore.instance
-                .collection('notices')
-                .doc(id)
-                .delete();
+  void _confirmDelete(BuildContext context, String day) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Delete Menu"),
+        content: Text("Delete menu for $day?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await FirebaseFirestore.instance
+                  .collection('mess_menu')
+                  .doc(day)
+                  .delete();
 
-            Navigator.pop(dialogContext); // ✅ CLOSES DIALOG PROPERLY
-          },
-          child: const Text("Delete"),
-        ),
-      ],
-    ),
-  );
-}
-
+              Navigator.pop(context);
+            },
+            child: const Text("Delete"),
+          ),
+        ],
+      ),
+    );
+  }
 }
