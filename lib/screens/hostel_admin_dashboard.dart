@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../hostel_admin/attendance_report_screen.dart';
 import '../main.dart';
 import '../hostel_admin/hostel_admin_layout.dart';
 import '../hostel_admin/list_students_screen.dart';
@@ -92,7 +93,7 @@ class _HostelAdminDashboardState extends State<HostelAdminDashboard> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const AttendanceListScreen(),
+                          builder: (_) => const AttendanceReportScreen(),
                         ),
                       );
                     },
@@ -180,8 +181,25 @@ class _HostelAdminDashboardState extends State<HostelAdminDashboard> {
                     stream: stream,
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) return const Text("0");
+                      int count = 0;
+
+                      if (snapshot.data!.docs.isNotEmpty) {
+                        final doc =
+                            snapshot.data!.docs.first.data()
+                                as Map<String, dynamic>;
+
+                        if (doc.containsKey('records')) {
+                          final records = Map<String, dynamic>.from(
+                            doc['records'],
+                          );
+                          count = records.values.where((v) => v == true).length;
+                        } else {
+                          count = snapshot.data!.docs.length;
+                        }
+                      }
+
                       return Text(
-                        snapshot.data!.docs.length.toString(),
+                        count.toString(),
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,

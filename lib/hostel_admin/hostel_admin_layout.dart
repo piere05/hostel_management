@@ -5,8 +5,10 @@ import '../main.dart';
 import '../screens/login_screen.dart';
 import '../screens/hostel_admin_dashboard.dart';
 
+import 'add_attendance_screen.dart';
 import 'add_notice_screen.dart';
 import 'add_student_screen.dart';
+import 'attendance_report_screen.dart';
 import 'hostel_admin_notification_screen.dart';
 import 'list_students_screen.dart';
 import 'add_breakage_screen.dart';
@@ -154,11 +156,11 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
                     children: [
                       _sub(
                         "Add Attendance",
-                        () => _go(const AttendanceListScreen()),
+                        () => _go(const AddAttendanceScreen()),
                       ),
                       _sub(
                         "List Attendance",
-                        () => _go(const AttendanceListScreen()),
+                        () => _go(const AttendanceReportScreen()),
                       ),
                     ],
                   ),
