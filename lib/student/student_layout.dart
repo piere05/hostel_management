@@ -9,6 +9,10 @@ import '../screens/student_dashboard.dart';
 // placeholders – we’ll build these later
 import 'request_leave_screen.dart';
 import 'leave_list_screen.dart';
+import 'student_attendance_screen.dart' show StudentAttendanceScreen;
+import 'student_breakage_list_screen.dart';
+import 'student_change_password_screen.dart';
+import 'student_fee_list_screen.dart' show StudentFeeListScreen;
 import 'student_profile_screen.dart';
 import 'student_notification_screen.dart';
 
@@ -16,11 +20,7 @@ class StudentLayout extends StatefulWidget {
   final Widget child;
   final String title;
 
-  const StudentLayout({
-    super.key,
-    required this.child,
-    required this.title,
-  });
+  const StudentLayout({super.key, required this.child, required this.title});
 
   @override
   State<StudentLayout> createState() => _StudentLayoutState();
@@ -37,24 +37,22 @@ class _StudentLayoutState extends State<StudentLayout> {
     _loadStudentName();
   }
 
-Future<void> _loadStudentName() async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user == null) return;
+  Future<void> _loadStudentName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
-  final snapshot = await FirebaseFirestore.instance
-      .collection('student')
-      .where('email', isEqualTo: user.email)
-      .limit(1)
-      .get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('student')
+        .where('email', isEqualTo: user.email)
+        .limit(1)
+        .get();
 
-  if (snapshot.docs.isNotEmpty && mounted) {
-    setState(() {
-      studentName = snapshot.docs.first['name'];
-    });
+    if (snapshot.docs.isNotEmpty && mounted) {
+      setState(() {
+        studentName = snapshot.docs.first['name'];
+      });
+    }
   }
-}
-
-
 
   // 🔐 Logout
   Future<void> _logout() async {
@@ -68,9 +66,7 @@ Future<void> _loadStudentName() async {
   }
 
   void _go(Widget page) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => page),
-    );
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
   }
 
   @override
@@ -91,12 +87,9 @@ Future<void> _loadStudentName() async {
                   const Icon(Icons.person, color: Colors.white, size: 40),
                   const SizedBox(height: 10),
                   Text(
-  studentName.isEmpty ? "Hi 👋" : "Hi, $studentName",
-  style: const TextStyle(
-    color: Colors.white,
-    fontSize: 18,
-  ),
-),
+                    studentName.isEmpty ? "Hi 👋" : "Hi, $studentName",
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                  ),
                 ],
               ),
             ),
@@ -134,6 +127,41 @@ Future<void> _loadStudentName() async {
               ],
             ),
 
+            ListTile(
+              leading: const Icon(Icons.calendar_month),
+              title: const Text("View Attendance"),
+              onTap: () {
+                Navigator.pop(context);
+                _go(const StudentAttendanceScreen());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.currency_rupee_sharp),
+              title: const Text("Manage Fees"),
+              onTap: () {
+                Navigator.pop(context);
+                _go(const StudentFeeListScreen());
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.dangerous),
+              title: const Text("View Breakage"),
+              onTap: () {
+                Navigator.pop(context);
+                _go(const StudentBreakageListScreen());
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.password),
+              title: const Text("Change Password"),
+              onTap: () {
+                Navigator.pop(context);
+                _go(const StudentChangePasswordScreen());
+              },
+            ),
+
             const Divider(),
 
             ListTile(
@@ -167,23 +195,71 @@ Future<void> _loadStudentName() async {
             _logout();
           }
         },
-        items: const [
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Home"),
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
+            icon: Stack(
+              children: [
+                Icon(Icons.notifications),
+
+                Positioned(
+                  right: 0,
+                  top: 1,
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('notices')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return const SizedBox();
+
+                      final email = FirebaseAuth.instance.currentUser?.email;
+                      if (email == null) return const SizedBox();
+
+                      final unreadCount = snapshot.data!.docs.where((doc) {
+                        final data = doc.data() as Map<String, dynamic>;
+
+                        final targetOk =
+                            data['target'] == 'all' ||
+                            data['target'] == 'student';
+
+                        final readBy = (data['readBy'] ?? []) as List;
+
+                        return targetOk && !readBy.contains(email);
+                      }).length;
+
+                      if (unreadCount == 0) return const SizedBox();
+
+                      return Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                        ),
+                        child: Center(
+                          child: Text(
+                            unreadCount.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
             label: "Notification",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profile",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.logout),
-            label: "Logout",
-          ),
+
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),
         ],
       ),
     );

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, curly_braces_in_flow_control_structures
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/pdf.dart';
@@ -185,7 +187,7 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
             center: true,
           ),
         ),
-        _cell("Total", 50, header: true, center: true),
+        _cell("Total Present", 50, header: true, center: true),
       ],
     );
   }
@@ -202,10 +204,12 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
         ...days.map((d) {
           final p = isPresent(d);
           return _cell(
-            p ? "P" : "",
+            p ? "P" : "A",
             38,
             center: true,
-            color: p ? Colors.green.shade700 : Colors.grey,
+            color: p
+                ? Colors.green.shade700
+                : const Color.fromARGB(255, 255, 0, 0),
           );
         }),
         _cell(total.toString(), 50, center: true, bold: true),
@@ -330,11 +334,9 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
                         ...days.map((day) {
                           final present = attendanceMap[day]?[regno] == true;
                           return _pdfCell(
-                            present ? "P" : "",
+                            present ? "P" : "A",
                             center: true,
-                            color: present
-                                ? PdfColors.green700
-                                : PdfColors.grey700,
+                            color: present ? PdfColors.green700 : PdfColors.red,
                           );
                         }),
                         _pdfCell(

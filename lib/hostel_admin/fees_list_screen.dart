@@ -1,23 +1,23 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+// ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 import 'hostel_admin_layout.dart';
-import 'add_notice_screen.dart';
+import 'add_fee_screen.dart';
+import 'fee_students_status_screen.dart';
 
-class NoticeListScreen extends StatelessWidget {
-  const NoticeListScreen({super.key});
+class FeesListScreen extends StatelessWidget {
+  const FeesListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return HostelAdminLayout(
-      title: "Notices",
+      title: "Fees",
       child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('notices')
-            .where('createdBy', isEqualTo: 'Admin')
+            .collection('fees')
             .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
@@ -26,7 +26,7 @@ class NoticeListScreen extends StatelessWidget {
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text("No notices found"));
+            return const Center(child: Text("No fees found"));
           }
 
           final docs = snapshot.data!.docs;
@@ -46,33 +46,45 @@ class NoticeListScreen extends StatelessWidget {
                       columns: const [
                         DataColumn(label: Text("Date")),
                         DataColumn(label: Text("Title")),
-                        DataColumn(label: Text("Description")),
+                        DataColumn(label: Text("Amount")),
+                        DataColumn(label: Text("Deadline")),
                         DataColumn(label: Text("Action")),
                       ],
                       rows: docs.map((doc) {
-                        final data = doc.data() as Map<String, dynamic>;
-                        final ts = data['createdAt'] as Timestamp?;
-                        final date = ts == null
-                            ? "-"
-                            : DateFormat('dd-MM-yyyy').format(ts.toDate());
+                        final d = doc.data() as Map<String, dynamic>;
+                        final created = (d['createdAt'] as Timestamp).toDate();
+                        final deadline = (d['deadline'] as Timestamp).toDate();
 
                         return DataRow(
                           cells: [
-                            DataCell(Text(date)),
-                            DataCell(Text(data['title'] ?? "")),
                             DataCell(
-                              SizedBox(
-                                width: 350,
-                                child: Text(
-                                  data['description'] ?? "",
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
+                              Text(DateFormat('dd-MM-yyyy').format(created)),
+                            ),
+                            DataCell(Text(d['title'] ?? "")),
+                            DataCell(Text("₹${d['amount']}")),
+                            DataCell(
+                              Text(DateFormat('dd-MM-yyyy').format(deadline)),
                             ),
                             DataCell(
                               Row(
                                 children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.remove_red_eye,
+                                      color: Colors.green,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              FeeStudentsStatusScreen(
+                                                feeId: doc.id,
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                  ),
                                   IconButton(
                                     icon: const Icon(
                                       Icons.edit,
@@ -82,21 +94,13 @@ class NoticeListScreen extends StatelessWidget {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) => AddNoticeScreen(
+                                          builder: (_) => AddFeeScreen(
                                             docId: doc.id,
-                                            data: data,
+                                            data: d,
                                           ),
                                         ),
                                       );
                                     },
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () =>
-                                        _confirmDelete(context, doc.id),
                                   ),
                                 ],
                               ),
@@ -111,34 +115,6 @@ class NoticeListScreen extends StatelessWidget {
             },
           );
         },
-      ),
-    );
-  }
-
-  void _confirmDelete(BuildContext context, String id) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text("Delete Notice"),
-        content: const Text("Are you sure you want to delete this notice?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text("Cancel"),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              await FirebaseFirestore.instance
-                  .collection('notices')
-                  .doc(id)
-                  .delete();
-
-              Navigator.pop(dialogContext); // ✅ CLOSES DIALOG PROPERLY
-            },
-            child: const Text("Delete"),
-          ),
-        ],
       ),
     );
   }

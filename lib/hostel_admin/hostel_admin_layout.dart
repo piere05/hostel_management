@@ -6,10 +6,11 @@ import '../screens/login_screen.dart';
 import '../screens/hostel_admin_dashboard.dart';
 
 import 'add_attendance_screen.dart';
+import 'add_fee_screen.dart';
 import 'add_notice_screen.dart';
 import 'add_student_screen.dart';
 import 'attendance_report_screen.dart';
-import 'hostel_admin_notification_screen.dart';
+import 'fees_list_screen.dart';
 import 'hostel_notification.dart';
 import 'list_students_screen.dart';
 import 'add_breakage_screen.dart';
@@ -77,6 +78,14 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
               },
             ),
 
+            ListTile(
+              leading: const Icon(Icons.assignment),
+              title: const Text("Manage Leave"),
+              onTap: () {
+                Navigator.pop(context);
+                _go(const LeaveListScreen());
+              },
+            ),
             ExpansionPanelList.radio(
               children: [
                 ExpansionPanelRadio(
@@ -117,22 +126,6 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
                 ),
 
                 ExpansionPanelRadio(
-                  value: "leave",
-                  headerBuilder: (_, __) => const ListTile(
-                    leading: Icon(Icons.assignment),
-                    title: Text("Manage Leave"),
-                  ),
-                  body: Column(
-                    children: [
-                      _sub(
-                        "Leave Requests",
-                        () => _go(const LeaveListScreen()),
-                      ),
-                    ],
-                  ),
-                ),
-
-                ExpansionPanelRadio(
                   value: "notice",
                   headerBuilder: (_, __) => const ListTile(
                     leading: Icon(Icons.notifications),
@@ -142,6 +135,20 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
                     children: [
                       _sub("Add Notice ", () => _go(const AddNoticeScreen())),
                       _sub("List Notice ", () => _go(const NoticeListScreen())),
+                    ],
+                  ),
+                ),
+
+                ExpansionPanelRadio(
+                  value: "fees",
+                  headerBuilder: (_, __) => const ListTile(
+                    leading: Icon(Icons.currency_rupee_sharp),
+                    title: Text("Manage Fees"),
+                  ),
+                  body: Column(
+                    children: [
+                      _sub("Add Fees ", () => _go(const AddFeeScreen())),
+                      _sub("List Fees ", () => _go(const FeesListScreen())),
                     ],
                   ),
                 ),

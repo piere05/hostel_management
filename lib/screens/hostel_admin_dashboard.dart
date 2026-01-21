@@ -9,7 +9,6 @@ import '../hostel_admin/hostel_admin_layout.dart';
 import '../hostel_admin/list_students_screen.dart';
 import '../hostel_admin/leave_list_screen.dart';
 import 'mess_menu_screen.dart';
-import '../utils/fcm_service.dart';
 
 class HostelAdminDashboard extends StatefulWidget {
   const HostelAdminDashboard({super.key});
@@ -19,12 +18,6 @@ class HostelAdminDashboard extends StatefulWidget {
 }
 
 class _HostelAdminDashboardState extends State<HostelAdminDashboard> {
- @override
-  void initState() {
-    super.initState();
-    FCMService.init();
-  }
-
   @override
   Widget build(BuildContext context) {
     final today = DateTime.now();

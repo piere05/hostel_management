@@ -44,10 +44,10 @@ class _BreakageListScreenState extends State<BreakageListScreen> {
 
                   final docs = snap.data!.docs.where((d) {
                     final m = d.data() as Map<String, dynamic>;
-                    final name =
-                        (m['studentName'] ?? '').toString().toLowerCase();
-                    final reg =
-                        (m['regno'] ?? '').toString().toLowerCase();
+                    final name = (m['studentName'] ?? '')
+                        .toString()
+                        .toLowerCase();
+                    final reg = (m['regno'] ?? '').toString().toLowerCase();
                     return name.contains(search) || reg.contains(search);
                   }).toList();
 
@@ -64,52 +64,80 @@ class _BreakageListScreenState extends State<BreakageListScreen> {
                         DataColumn(label: Text("Mobile")),
                         DataColumn(label: Text("Amount")),
                         DataColumn(label: Text("Status")),
+                        DataColumn(label: Text("Paid With")),
+                        DataColumn(label: Text("Paid Date")),
                         DataColumn(label: Text("Action")),
                       ],
                       rows: docs.map((d) {
                         final m = d.data() as Map<String, dynamic>;
 
-                        return DataRow(cells: [
-                          DataCell(
-                              Text((m['studentName'] ?? '-').toString())),
-                          DataCell(Text((m['regno'] ?? '-').toString())),
-                          DataCell(Text((m['mobile'] ?? '-').toString())),
-                          DataCell(
-                              Text((m['amount'] ?? 0).toString())),
-                          DataCell(
-                            Text(
-                              (m['status'] ?? 'not_paid').toString(),
-                              style: TextStyle(
-                                color: (m['status'] ?? '') == "paid"
-                                    ? Colors.green
-                                    : Colors.red,
-                              ),
+                        return DataRow(
+                          cells: [
+                            DataCell(
+                              Text((m['studentName'] ?? '-').toString()),
                             ),
-                          ),
-                          DataCell(Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => AddBreakageScreen(
-                                      docId: d.id,
-                                      data: m,
-                                    ),
-                                  ),
+                            DataCell(Text((m['regno'] ?? '-').toString())),
+                            DataCell(Text((m['mobile'] ?? '-').toString())),
+                            DataCell(Text((m['amount'] ?? 0).toString())),
+
+                            DataCell(
+                              Text(
+                                (m['status'] ?? 'not_paid').toString(),
+                                style: TextStyle(
+                                  color: (m['status'] ?? '') == "paid"
+                                      ? Colors.green
+                                      : Colors.red,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () => FirebaseFirestore.instance
-                                    .collection("breakage")
-                                    .doc(d.id)
-                                    .delete(),
+                            ),
+
+                            // ✅ Paid With
+                            DataCell(
+                              Text(
+                                (m['status'] == 'paid')
+                                    ? (m['method'] ?? '-').toString()
+                                    : '-',
                               ),
-                            ],
-                          )),
-                        ]);
+                            ),
+
+                            // ✅ Paid Date
+                            DataCell(
+                              Text(
+                                (m['status'] == 'paid' &&
+                                        m['updatedAt'] != null)
+                                    ? _formatDate(m['updatedAt'])
+                                    : '-',
+                              ),
+                            ),
+
+                            DataCell(
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => AddBreakageScreen(
+                                          docId: d.id,
+                                          data: m,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: () => FirebaseFirestore.instance
+                                        .collection("breakage")
+                                        .doc(d.id)
+                                        .delete(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
                       }).toList(),
                     ),
                   );
@@ -121,4 +149,11 @@ class _BreakageListScreenState extends State<BreakageListScreen> {
       ),
     );
   }
+}
+
+String _formatDate(Timestamp t) {
+  final d = t.toDate();
+  return "${d.day.toString().padLeft(2, '0')}-"
+      "${d.month.toString().padLeft(2, '0')}-"
+      "${d.year}";
 }

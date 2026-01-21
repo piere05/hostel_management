@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -34,9 +36,7 @@ class MenuListScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minWidth: constraints.maxWidth,
-                    ),
+                    constraints: BoxConstraints(minWidth: constraints.maxWidth),
                     child: DataTable(
                       columnSpacing: 40,
                       headingRowHeight: 56,
@@ -53,17 +53,16 @@ class MenuListScreen extends StatelessWidget {
                           cells: [
                             DataCell(Text(data['day'])),
                             DataCell(
-                              SizedBox(
-                                width: 400,
-                                child: Text(data['menu']),
-                              ),
+                              SizedBox(width: 400, child: Text(data['menu'])),
                             ),
                             DataCell(
                               Row(
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.edit,
-                                        color: Colors.blue),
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.blue,
+                                    ),
                                     onPressed: () {
                                       Navigator.push(
                                         context,
@@ -77,8 +76,10 @@ class MenuListScreen extends StatelessWidget {
                                     },
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
                                     onPressed: () =>
                                         _confirmDelete(context, doc.id),
                                   ),

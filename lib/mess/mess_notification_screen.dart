@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -48,8 +50,7 @@ class MessNotificationScreen extends StatelessWidget {
                 by: data['createdBy'] ?? 'Admin',
                 date: date,
                 imageBase64: data['imageBase64'],
-                color:
-                    Colors.primaries[index % Colors.primaries.length],
+                color: Colors.primaries[index % Colors.primaries.length],
               );
             },
           );
@@ -67,8 +68,7 @@ class MessNotificationScreen extends StatelessWidget {
     required Color color,
     String? imageBase64,
   }) {
-    final hasImage =
-        imageBase64 != null && imageBase64.trim().isNotEmpty;
+    final hasImage = imageBase64 != null && imageBase64.trim().isNotEmpty;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -152,10 +152,7 @@ class MessNotificationScreen extends StatelessWidget {
                     const SizedBox(width: 6),
                     Text(
                       date,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.black,
-                      ),
+                      style: const TextStyle(fontSize: 13, color: Colors.black),
                     ),
                   ],
                 ),
@@ -172,8 +169,7 @@ class MessNotificationScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: const [
-          Icon(Icons.notifications_none,
-              size: 70, color: Colors.grey),
+          Icon(Icons.notifications_none, size: 70, color: Colors.grey),
           SizedBox(height: 12),
           Text("No notifications yet"),
         ],

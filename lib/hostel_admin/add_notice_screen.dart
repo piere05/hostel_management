@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -59,12 +61,10 @@ class _AddNoticeScreenState extends State<AddNoticeScreen> {
       await ref.doc(widget.docId).update(data);
     }
 
-   Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (_) => const NoticeListScreen(),
-    ),
-  );
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const NoticeListScreen()),
+    );
   }
 
   @override

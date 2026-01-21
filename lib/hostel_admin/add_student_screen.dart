@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -12,11 +14,7 @@ class AddStudentScreen extends StatefulWidget {
   final Map<String, dynamic>? studentData;
   final String? docId;
 
-  const AddStudentScreen({
-    super.key,
-    this.studentData,
-    this.docId,
-  });
+  const AddStudentScreen({super.key, this.studentData, this.docId});
 
   @override
   State<AddStudentScreen> createState() => _AddStudentScreenState();
@@ -70,8 +68,10 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
   // ================= IMAGE PICK =================
   Future<void> pickImage() async {
     final picker = ImagePicker();
-    final XFile? img =
-        await picker.pickImage(source: ImageSource.gallery, imageQuality: 60);
+    final XFile? img = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 60,
+    );
     if (img == null) return;
 
     final bytes = await img.readAsBytes();
@@ -101,21 +101,21 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
         .collection("student")
         .doc(widget.docId ?? regCtrl.text.trim())
         .set({
-      "name": nameCtrl.text.trim(),
-      "regno": regCtrl.text.trim(),
-      "email": emailCtrl.text.trim(),
-      "mobile": mobileCtrl.text.trim(),
-      "parentMobile": parentCtrl.text.trim(),
-      "course": course,
-      "dob": dob,
-      "department": deptCtrl.text.trim(),
-      "year": yearCtrl.text.trim(),
-      "joiningDate": joinDate,
-      "duration": durationCtrl.text.trim(),
-      "address": addressCtrl.text.trim(),
-      "profileImageBase64": base64Image,
-      "updatedAt": Timestamp.now(),
-    }, SetOptions(merge: true));
+          "name": nameCtrl.text.trim(),
+          "regno": regCtrl.text.trim(),
+          "email": emailCtrl.text.trim(),
+          "mobile": mobileCtrl.text.trim(),
+          "parentMobile": parentCtrl.text.trim(),
+          "course": course,
+          "dob": dob,
+          "department": deptCtrl.text.trim(),
+          "year": yearCtrl.text.trim(),
+          "joiningDate": joinDate,
+          "duration": durationCtrl.text.trim(),
+          "address": addressCtrl.text.trim(),
+          "profileImageBase64": base64Image,
+          "updatedAt": Timestamp.now(),
+        }, SetOptions(merge: true));
 
     setState(() => loading = false);
 
@@ -133,8 +133,9 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Form(
@@ -175,22 +176,30 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
                       DropdownMenuItem(value: "UG", child: Text("UG")),
                       DropdownMenuItem(value: "PG", child: Text("PG")),
                       DropdownMenuItem(
-                          value: "Diploma", child: Text("Diploma")),
+                        value: "Diploma",
+                        child: Text("Diploma"),
+                      ),
                     ],
                     onChanged: (v) => setState(() => course = v!),
                   ),
 
                   const SizedBox(height: 16),
-                  _dateTile("Date of Birth", dob,
-                      (d) => setState(() => dob = d)),
+                  _dateTile(
+                    "Date of Birth",
+                    dob,
+                    (d) => setState(() => dob = d),
+                  ),
                   const SizedBox(height: 16),
 
                   _field("Department", deptCtrl),
                   _field("Year", yearCtrl),
 
                   const SizedBox(height: 16),
-                  _dateTile("Joining Date", joinDate,
-                      (d) => setState(() => joinDate = d)),
+                  _dateTile(
+                    "Joining Date",
+                    joinDate,
+                    (d) => setState(() => joinDate = d),
+                  ),
 
                   const SizedBox(height: 16),
                   _field("Duration (2021-2024)", durationCtrl),
@@ -202,11 +211,12 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
                     child: ElevatedButton(
                       onPressed: loading ? null : saveStudent,
                       child: loading
-                          ? const CircularProgressIndicator(
-                              color: Colors.white)
-                          : Text(widget.docId == null
-                              ? "ADD STUDENT"
-                              : "UPDATE STUDENT"),
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : Text(
+                              widget.docId == null
+                                  ? "ADD STUDENT"
+                                  : "UPDATE STUDENT",
+                            ),
                     ),
                   ),
                 ],
@@ -234,8 +244,7 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
     );
   }
 
-  Widget _dateTile(
-      String label, DateTime? value, Function(DateTime) onPick) {
+  Widget _dateTile(String label, DateTime? value, Function(DateTime) onPick) {
     return InkWell(
       onTap: () async {
         final d = await showDatePicker(
@@ -256,8 +265,8 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
           value == null
               ? "Select $label"
               : "${value.day.toString().padLeft(2, '0')}-"
-                "${value.month.toString().padLeft(2, '0')}-"
-                "${value.year}",
+                    "${value.month.toString().padLeft(2, '0')}-"
+                    "${value.year}",
         ),
       ),
     );

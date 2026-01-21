@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -8,11 +10,7 @@ class AddMenuScreen extends StatefulWidget {
   final String? editDay;
   final String? editMenu;
 
-  const AddMenuScreen({
-    super.key,
-    this.editDay,
-    this.editMenu,
-  });
+  const AddMenuScreen({super.key, this.editDay, this.editMenu});
 
   @override
   State<AddMenuScreen> createState() => _AddMenuScreenState();
@@ -29,7 +27,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
     "Wednesday",
     "Thursday",
     "Friday",
-    "Saturday"
+    "Saturday",
   ];
 
   @override
@@ -51,10 +49,10 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
         .collection('mess_menu')
         .doc(day) // 👈 one doc per day (insert/update)
         .set({
-      'day': day,
-      'menu': menu,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
+          'day': day,
+          'menu': menu,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
 
     if (!mounted) return;
 
@@ -75,12 +73,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
             DropdownButtonFormField(
               value: day,
               items: days
-                  .map(
-                    (d) => DropdownMenuItem(
-                      value: d,
-                      child: Text(d),
-                    ),
-                  )
+                  .map((d) => DropdownMenuItem(value: d, child: Text(d)))
                   .toList(),
               onChanged: (v) => setState(() => day = v!),
               decoration: const InputDecoration(labelText: "Select Day"),
@@ -89,8 +82,7 @@ class _AddMenuScreenState extends State<AddMenuScreen> {
             TextField(
               controller: menuCtrl,
               maxLines: 4,
-              decoration:
-                  const InputDecoration(labelText: "Menu Description"),
+              decoration: const InputDecoration(labelText: "Menu Description"),
             ),
             const SizedBox(height: 20),
             ElevatedButton(

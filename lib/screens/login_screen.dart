@@ -30,14 +30,15 @@ class _LoginScreenState extends State<LoginScreen> {
         (route) => false,
       );
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? "Login failed")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message ?? "Login failed")));
     }
 
     if (mounted) setState(() => isLoading = false);
   }
 
+  bool _obscurePassword = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,10 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 60),
 
-              Image.asset(
-                'assets/images/logo.jpg',
-                height: 120,
-              ),
+              Image.asset('assets/images/logo.jpg', height: 120),
 
               const SizedBox(height: 40),
 
@@ -75,11 +73,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
               TextField(
                 controller: passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
                   labelText: "Password",
-                  prefixIcon: Icon(Icons.lock),
-                  border: OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                  border: const OutlineInputBorder(),
                 ),
               ),
 

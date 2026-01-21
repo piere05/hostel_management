@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -92,8 +94,9 @@ class _AddBreakageScreenState extends State<AddBreakageScreen> {
           children: [
             /// SELECT STUDENT
             StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection("student").snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection("student")
+                  .snapshots(),
               builder: (_, snap) {
                 if (!snap.hasData) return const SizedBox();
 
@@ -112,9 +115,9 @@ class _AddBreakageScreenState extends State<AddBreakageScreen> {
                     );
                   }).toList(),
                   onChanged: (val) {
-                    final s = snap.data!.docs
-                        .firstWhere((e) => e.id == val)
-                        .data() as Map<String, dynamic>;
+                    final s =
+                        snap.data!.docs.firstWhere((e) => e.id == val).data()
+                            as Map<String, dynamic>;
 
                     setState(() {
                       studentId = val;
@@ -132,7 +135,9 @@ class _AddBreakageScreenState extends State<AddBreakageScreen> {
             TextField(
               controller: reasonCtrl,
               decoration: const InputDecoration(
-                  labelText: "Reason", border: OutlineInputBorder()),
+                labelText: "Reason",
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 16),
 
@@ -140,7 +145,9 @@ class _AddBreakageScreenState extends State<AddBreakageScreen> {
               controller: amountCtrl,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
-                  labelText: "Amount", border: OutlineInputBorder()),
+                labelText: "Amount",
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 16),
 
@@ -152,7 +159,9 @@ class _AddBreakageScreenState extends State<AddBreakageScreen> {
               ],
               onChanged: (v) => setState(() => status = v!),
               decoration: const InputDecoration(
-                  labelText: "Status", border: OutlineInputBorder()),
+                labelText: "Status",
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 16),
 
@@ -165,7 +174,8 @@ class _AddBreakageScreenState extends State<AddBreakageScreen> {
                   image: imageBase64 != null
                       ? DecorationImage(
                           image: MemoryImage(base64Decode(imageBase64!)),
-                          fit: BoxFit.cover)
+                          fit: BoxFit.cover,
+                        )
                       : null,
                 ),
                 child: imageBase64 == null
@@ -175,10 +185,7 @@ class _AddBreakageScreenState extends State<AddBreakageScreen> {
             ),
 
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: saveBreakage,
-              child: const Text("SAVE"),
-            ),
+            ElevatedButton(onPressed: saveBreakage, child: const Text("SAVE")),
           ],
         ),
       ),

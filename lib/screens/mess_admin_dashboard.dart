@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
 import '../mess/mess_layout.dart';
@@ -5,7 +7,6 @@ import '../mess/add_menu_screen.dart';
 import '../mess/menu_list_screen.dart';
 import '../mess/add_notice_screen.dart';
 import '../mess/notice_list_screen.dart';
-import '../utils/fcm_service.dart' show FCMService;
 
 class MessDashboard extends StatefulWidget {
   const MessDashboard({super.key});
@@ -15,14 +16,6 @@ class MessDashboard extends StatefulWidget {
 }
 
 class _MessDashboardState extends State<MessDashboard> {
-
-  @override
-  void initState() {
-    super.initState();
-    FCMService.init(); // ✅ ADD HERE
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return MessLayout(
@@ -96,10 +89,7 @@ class _MessDashboardState extends State<MessDashboard> {
     return InkWell(
       borderRadius: BorderRadius.circular(14),
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => page),
-        );
+        Navigator.push(context, MaterialPageRoute(builder: (_) => page));
       },
       child: Container(
         decoration: BoxDecoration(
@@ -117,10 +107,7 @@ class _MessDashboardState extends State<MessDashboard> {
             const SizedBox(height: 12),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ],
         ),

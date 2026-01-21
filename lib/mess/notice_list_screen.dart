@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
@@ -36,9 +38,7 @@ class NoticeListScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minWidth: constraints.maxWidth,
-                    ),
+                    constraints: BoxConstraints(minWidth: constraints.maxWidth),
                     child: DataTable(
                       columnSpacing: 30,
                       headingRowHeight: 56,
@@ -74,8 +74,10 @@ class NoticeListScreen extends StatelessWidget {
                               Row(
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.edit,
-                                        color: Colors.blue),
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.blue,
+                                    ),
                                     onPressed: () {
                                       Navigator.push(
                                         context,
@@ -92,8 +94,10 @@ class NoticeListScreen extends StatelessWidget {
                                     },
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
                                     onPressed: () =>
                                         _confirmDelete(context, doc.id),
                                   ),
@@ -115,31 +119,30 @@ class NoticeListScreen extends StatelessWidget {
   }
 
   void _confirmDelete(BuildContext context, String id) {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (dialogContext) => AlertDialog(
-      title: const Text("Delete Notice"),
-      content: const Text("Are you sure you want to delete this notice?"),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext),
-          child: const Text("Cancel"),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            await FirebaseFirestore.instance
-                .collection('notices')
-                .doc(id)
-                .delete();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text("Delete Notice"),
+        content: const Text("Are you sure you want to delete this notice?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await FirebaseFirestore.instance
+                  .collection('notices')
+                  .doc(id)
+                  .delete();
 
-            Navigator.pop(dialogContext); // ✅ CLOSES DIALOG PROPERLY
-          },
-          child: const Text("Delete"),
-        ),
-      ],
-    ),
-  );
-}
-
+              Navigator.pop(dialogContext); // ✅ CLOSES DIALOG PROPERLY
+            },
+            child: const Text("Delete"),
+          ),
+        ],
+      ),
+    );
+  }
 }
