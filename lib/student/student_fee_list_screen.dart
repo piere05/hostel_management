@@ -140,40 +140,42 @@ class _StudentFeeListScreenState extends State<StudentFeeListScreen> {
               }
 
               return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columns: const [
-                    DataColumn(label: Text("Title")),
-                    DataColumn(label: Text("Amount")),
-                    DataColumn(label: Text("Deadline")),
-                    DataColumn(label: Text("Status")),
-                    DataColumn(label: Text("Action")),
-                  ],
-                  rows: feeSnap.data!.docs.map((feeDoc) {
-                    final fee = feeDoc.data() as Map<String, dynamic>;
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: const [
+                      DataColumn(label: Text("Title")),
+                      DataColumn(label: Text("Amount")),
+                      DataColumn(label: Text("Deadline")),
+                      DataColumn(label: Text("Status")),
+                      DataColumn(label: Text("Action")),
+                    ],
+                    rows: feeSnap.data!.docs.map((feeDoc) {
+                      final fee = feeDoc.data() as Map<String, dynamic>;
 
-                    return DataRow(
-                      cells: [
-                        DataCell(Text(fee['title'])),
-                        DataCell(Text("₹${fee['amount']}")),
-                        DataCell(
-                          Text(
-                            DateFormat(
-                              'dd-MM-yyyy',
-                            ).format(fee['deadline'].toDate()),
+                      return DataRow(
+                        cells: [
+                          DataCell(Text(fee['title'])),
+                          DataCell(Text("₹${fee['amount']}")),
+                          DataCell(
+                            Text(
+                              DateFormat(
+                                'dd-MM-yyyy',
+                              ).format(fee['deadline'].toDate()),
+                            ),
                           ),
-                        ),
-                        DataCell(_statusCell(feeDoc.id)),
-                        DataCell(
-                          _actionCell(
-                            feeId: feeDoc.id,
-                            title: fee['title'],
-                            amount: fee['amount'],
+                          DataCell(_statusCell(feeDoc.id)),
+                          DataCell(
+                            _actionCell(
+                              feeId: feeDoc.id,
+                              title: fee['title'],
+                              amount: fee['amount'],
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
+                        ],
+                      );
+                    }).toList(),
+                  ),
                 ),
               );
             },
