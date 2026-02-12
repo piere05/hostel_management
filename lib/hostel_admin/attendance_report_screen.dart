@@ -124,21 +124,28 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
               return const Center(child: CircularProgressIndicator());
             }
 
-            final Map<int, Map<String, bool>> attendanceMap = {};
+            final Map<int, Map<String, String>> attendanceMap = {};
 
             for (var doc in attSnap.data!.docs) {
               final data = doc.data() as Map<String, dynamic>;
+
               if (!data.containsKey("date") || !data.containsKey("records"))
                 continue;
 
-              final date = DateTime.parse(data["date"]);
+              DateTime date;
+              try {
+                date = DateTime.parse(data["date"]);
+              } catch (_) {
+                continue;
+              }
+
               if (date.year != year || date.month != month) continue;
 
               attendanceMap.putIfAbsent(date.day, () => {});
               final records = Map<String, dynamic>.from(data["records"]);
 
-              records.forEach((r, p) {
-                attendanceMap[date.day]![r] = p == true;
+              records.forEach((regno, present) {
+                attendanceMap[date.day]![regno] = present == true ? "P" : "A";
               });
             }
 
@@ -154,14 +161,18 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
                     ...students.map((s) {
                       final m = s.data() as Map<String, dynamic>;
                       final regno = m['regno'];
-                      final total = days
-                          .where((d) => attendanceMap[d]?[regno] == true)
-                          .length;
+
+                      final total = days.where((d) {
+                        return attendanceMap[d]?[regno] == "P";
+                      }).length;
 
                       return _dataRow(
                         name: m['name'] ?? "",
                         days: days,
-                        isPresent: (d) => attendanceMap[d]?[regno] == true,
+                        status: (d) {
+                          if (!attendanceMap.containsKey(d)) return "";
+                          return attendanceMap[d]?[regno] ?? "A";
+                        },
                         total: total,
                       );
                     }),
@@ -195,22 +206,23 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
   Widget _dataRow({
     required String name,
     required List<int> days,
-    required bool Function(int) isPresent,
+    required String Function(int) status,
     required int total,
   }) {
     return Row(
       children: [
         _cell(name, 130),
         ...days.map((d) {
-          final p = isPresent(d);
-          return _cell(
-            p ? "P" : "A",
-            38,
-            center: true,
-            color: p
-                ? Colors.green.shade700
-                : const Color.fromARGB(255, 255, 0, 0),
-          );
+          final value = status(d);
+
+          Color? textColor;
+          if (value == "P") {
+            textColor = Colors.green.shade700;
+          } else if (value == "A") {
+            textColor = Colors.red;
+          }
+
+          return _cell(value, 38, center: true, color: textColor);
         }),
         _cell(total.toString(), 50, center: true, bold: true),
       ],
@@ -245,7 +257,7 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
     );
   }
 
-  // ================= PDF EXPORT (SAFE) =================
+  // ================= PDF EXPORT (LOGIC FIXED ONLY) =================
   Future<void> _downloadPdf(List<int> days, String monthName) async {
     final pdf = pw.Document();
 
@@ -258,7 +270,7 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
         .collection("attendance")
         .get();
 
-    final Map<int, Map<String, bool>> attendanceMap = {};
+    final Map<int, Map<String, String>> attendanceMap = {};
 
     for (var doc in attendanceSnap.docs) {
       final data = doc.data();
@@ -271,7 +283,7 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
       final records = Map<String, dynamic>.from(data["records"]);
 
       records.forEach((regno, present) {
-        attendanceMap[date.day]![regno] = present == true;
+        attendanceMap[date.day]![regno] = present == true ? "P" : "A";
       });
     }
 
@@ -324,19 +336,26 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
                     final m = s.data();
                     final regno = m['regno'];
 
-                    final presentDays = days
-                        .where((d) => attendanceMap[d]?[regno] == true)
-                        .length;
+                    final presentDays = days.where((d) {
+                      return attendanceMap[d]?[regno] == "P";
+                    }).length;
 
                     return pw.TableRow(
                       children: [
                         _pdfCell(m['name'] ?? ""),
                         ...days.map((day) {
-                          final present = attendanceMap[day]?[regno] == true;
+                          if (!attendanceMap.containsKey(day)) {
+                            return _pdfCell("", center: true);
+                          }
+
+                          final value = attendanceMap[day]?[regno] ?? "A";
+
                           return _pdfCell(
-                            present ? "P" : "A",
+                            value,
                             center: true,
-                            color: present ? PdfColors.green700 : PdfColors.red,
+                            color: value == "P"
+                                ? PdfColors.green700
+                                : PdfColors.red,
                           );
                         }),
                         _pdfCell(

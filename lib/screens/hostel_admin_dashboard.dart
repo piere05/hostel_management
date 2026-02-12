@@ -98,7 +98,7 @@ class _HostelAdminDashboardState extends State<HostelAdminDashboard> {
                     icon: Icons.assignment,
                     color: Colors.orange,
                     stream: FirebaseFirestore.instance
-                        .collection('leaves')
+                        .collection('student_leaves')
                         .where('fromDate', isGreaterThanOrEqualTo: lastWeek)
                         .snapshots(),
                     onTap: () {

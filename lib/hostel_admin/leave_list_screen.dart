@@ -76,6 +76,7 @@ class _LeaveListScreenState extends State<LeaveListScreen> {
                         DataColumn(label: Text("From")),
                         DataColumn(label: Text("To")),
                         DataColumn(label: Text("Days")),
+                        DataColumn(label: Text("Reason")),
                         DataColumn(label: Text("Status")),
                         DataColumn(label: Text("Action")),
                       ],
@@ -93,6 +94,7 @@ class _LeaveListScreenState extends State<LeaveListScreen> {
                             DataCell(Text(_fmt(d['fromDate']))),
                             DataCell(Text(_fmt(d['toDate']))),
                             DataCell(Text((d['totalDays'] ?? 0).toString())),
+                            DataCell(Text((d['reason']))),
                             DataCell(
                               Text(
                                 status,

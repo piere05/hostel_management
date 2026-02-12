@@ -143,10 +143,11 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final Map<int, bool> attendanceMap = {};
+        final Map<int, String> attendanceMap = {};
 
         for (var doc in attSnap.data!.docs) {
           final data = doc.data() as Map<String, dynamic>;
+
           if (!data.containsKey("date") || !data.containsKey("records"))
             continue;
 
@@ -160,12 +161,19 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
           if (date.year != year || date.month != month) continue;
 
           final records = Map<String, dynamic>.from(data["records"]);
-          if (records[regNo] == true) {
-            attendanceMap[date.day] = true;
+
+          if (records.containsKey(regNo)) {
+            if (records[regNo] == true) {
+              attendanceMap[date.day] = "P";
+            } else {
+              attendanceMap[date.day] = "A";
+            }
+          } else {
+            attendanceMap[date.day] = "A";
           }
         }
 
-        final total = days.where((d) => attendanceMap[d] == true).length;
+        final total = attendanceMap.values.where((v) => v == "P").length;
 
         return SingleChildScrollView(
           controller: _horizontalController,
@@ -179,7 +187,7 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
                 _dataRow(
                   name: studentName ?? "",
                   days: days,
-                  isPresent: (d) => attendanceMap[d] == true,
+                  status: (d) => attendanceMap[d] ?? "",
                   total: total,
                 ),
               ],
@@ -211,22 +219,24 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
   Widget _dataRow({
     required String name,
     required List<int> days,
-    required bool Function(int) isPresent,
+    required String Function(int) status,
     required int total,
   }) {
     return Row(
       children: [
         _cell(name, 130),
         ...days.map((d) {
-          final p = isPresent(d);
-          return _cell(
-            p ? "P" : "A",
-            38,
-            center: true,
-            color: p
-                ? Colors.green.shade700
-                : const Color.fromARGB(255, 255, 3, 3),
-          );
+          final value = status(d);
+
+          Color? textColor;
+
+          if (value == "P") {
+            textColor = Colors.green.shade700;
+          } else if (value == "A") {
+            textColor = Colors.red;
+          }
+
+          return _cell(value, 38, center: true, color: textColor);
         }),
         _cell(total.toString(), 50, center: true, bold: true),
       ],
@@ -284,8 +294,8 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
       if (date.year != year || date.month != month) continue;
 
       final records = Map<String, dynamic>.from(data["records"]);
-      if (records[regNo] == true) {
-        attendanceMap[date.day] = true;
+      if (records.containsKey(regNo)) {
+        attendanceMap[date.day] = records[regNo] == true;
       }
     }
 
@@ -312,7 +322,10 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
                 data: [
                   [
                     studentName ?? "",
-                    ...days.map((d) => attendanceMap[d] == true ? "P" : "A"),
+                    ...days.map((d) {
+                      if (!attendanceMap.containsKey(d)) return "";
+                      return attendanceMap[d] == true ? "P" : "A";
+                    }),
                     total.toString(),
                   ],
                 ],

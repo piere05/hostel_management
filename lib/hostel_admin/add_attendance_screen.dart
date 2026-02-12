@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'attendance_report_screen.dart';
 import 'hostel_admin_layout.dart';
 
 class AddAttendanceScreen extends StatefulWidget {
@@ -46,9 +47,16 @@ class _AddAttendanceScreenState extends State<AddAttendanceScreen> {
       "createdAt": Timestamp.now(),
     });
 
+    if (!mounted) return;
+
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text("Attendance saved")));
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AttendanceReportScreen()),
+    );
   }
 
   @override
