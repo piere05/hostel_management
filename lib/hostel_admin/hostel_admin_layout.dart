@@ -9,6 +9,7 @@ import 'add_attendance_screen.dart';
 import 'add_fee_screen.dart';
 import 'add_notice_screen.dart';
 import 'add_student_screen.dart';
+import 'admin_complaint_list_screen.dart';
 import 'attendance_report_screen.dart';
 import 'fees_list_screen.dart';
 import 'hostel_notification.dart';
@@ -84,6 +85,15 @@ class _HostelAdminLayoutState extends State<HostelAdminLayout> {
               onTap: () {
                 Navigator.pop(context);
                 _go(const LeaveListScreen());
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.assignment),
+              title: const Text("Manage Complaints"),
+              onTap: () {
+                Navigator.pop(context);
+                _go(const ComplaintListScreen());
               },
             ),
             ExpansionPanelList.radio(

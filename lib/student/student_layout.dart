@@ -7,11 +7,13 @@ import '../screens/login_screen.dart';
 import '../screens/student_dashboard.dart';
 
 // placeholders – we’ll build these later
+import 'register_complaint_screen.dart';
 import 'request_leave_screen.dart';
 import 'leave_list_screen.dart';
 import 'student_attendance_screen.dart' show StudentAttendanceScreen;
 import 'student_breakage_list_screen.dart';
 import 'student_change_password_screen.dart';
+import 'student_complaint_list_screen.dart';
 import 'student_fee_list_screen.dart' show StudentFeeListScreen;
 import 'student_profile_screen.dart';
 import 'student_notification_screen.dart';
@@ -127,6 +129,29 @@ class _StudentLayoutState extends State<StudentLayout> {
               ],
             ),
 
+            ExpansionPanelList.radio(
+              children: [
+                ExpansionPanelRadio(
+                  value: "complaint",
+                  headerBuilder: (_, __) => const ListTile(
+                    leading: Icon(Icons.assignment),
+                    title: Text("Manage Complaints"),
+                  ),
+                  body: Column(
+                    children: [
+                      _sub(
+                        "Request Complaint",
+                        () => _go(const RegisterComplaintScreen()),
+                      ),
+                      _sub(
+                        "List Complaints",
+                        () => _go(const StudentComplaintListScreen()),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             ListTile(
               leading: const Icon(Icons.calendar_month),
               title: const Text("View Attendance"),
